@@ -6,7 +6,7 @@ class Card:
         self.symbol = symbol
         self.value = value
     
-    def __cmp__(self, other):
+    def __lt__(self, other):
         if self.value < other.value:
             return -1
         elif self.value == other.value:
@@ -27,11 +27,7 @@ class Card:
             text = "A"
         else:
             text = str(self.value)
-        
-        
-        
-        
-        
+
         if self.symbol == 0:    #D-Diamonds
             text += "D" 
         elif self.symbol == 1:  #H-Hearts

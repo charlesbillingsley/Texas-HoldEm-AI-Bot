@@ -118,7 +118,7 @@ class Poker:
         #Keeps track of the number of pairs and sets. The value of the previous dictionary
         #is the key. Therefore if there is a pair of 4s and 3 kings -> {"2":1,"3":1}
         nop = {}
-        for k, v in pairs.iteritems():
+        for k, v in pairs.items():
             if v in nop:
                 nop[v] += 1
             else:
@@ -129,7 +129,7 @@ class Poker:
         
         if 4 in nop:        #Has 4 of a kind, assigns the score and the value of the 
             score = 7
-            kicker = pairs.keys()
+            kicker = list(pairs.keys())
             #ensures the first kicker is the value of the 4 of a kind
             kicker = [key for key in kicker if pairs[key] == 4] 
             key = kicker[0]
@@ -149,7 +149,7 @@ class Poker:
                 score = 6
                 
                 #gets a list of all the pairs and reverses it
-                kicker = pairs.keys()
+                kicker = list(pairs.keys())
                 kicker.reverse()
                 temp = kicker
                 
@@ -167,7 +167,7 @@ class Poker:
             else:           #Has Only 3 of A Kind
                 score = 3
                 
-                kicker = pairs.keys()       #Gets the value of the 3 of a king
+                kicker = list(pairs.keys())       #Gets the value of the 3 of a king
                 key = kicker[0]
                 
                 #Gets a list of all the cards remaining once the three of a kind is removed
@@ -184,7 +184,7 @@ class Poker:
             if nop[2] >= 2:     #Has at least 2  or 3 pairs
                 score = 2
                 
-                kicker = pairs.keys()   #Gets the card value of all the pairs 
+                kicker = list(pairs.keys())   #Gets the card value of all the pairs
                 kicker.reverse()        #reverses the key so highest pairs are used
                 
                 if ( len(kicker) == 3 ):    #if the user has 3 pairs takes only the highest 2
@@ -203,7 +203,7 @@ class Poker:
             else:           #Has only a pair
                 score = 1 
                 
-                kicker = pairs.keys()   #Gets the value of the pair
+                kicker = list(pairs.keys())   #Gets the value of the pair
                 key = kicker[0] 
      
                 #Gets a list of all the cards remaining once pair are removed
@@ -274,7 +274,7 @@ class Poker:
         
         #key represents the suit of a flush if it is within the hand
         key = -1
-        for k, v in total.iteritems():
+        for k, v in total.items():
             if v >= 5:
                 key = int(k)
         
@@ -367,7 +367,7 @@ class Poker:
     
         results = []
         if self.debug:      #Outputs the debug statements
-            print "---- Determining Scores----"
+            print("---- Determining Scores----")
         for hand in players_hands:
                      
             overall = self.score(hand)
@@ -385,7 +385,7 @@ class Poker:
                         kicker += str(c) + "  "
                     except:
                         kicker += str(c) + "  "
-                print text + "Score: " + str(overall.pop(0)) + ", Kicker: " + kicker
+                print(text + "Score: " + str(overall.pop(0)) + ", Kicker: " + kicker)
         
         
         return results
@@ -395,7 +395,7 @@ class Poker:
     #===============================================
     def determine_winner(self, results):
         if self.debug:
-            print "---- Determining Winner----"
+            print("---- Determining Winner----")
             
         #the highest score if found
         high = 0
@@ -404,7 +404,7 @@ class Poker:
                 high = r[0]
             
             if self.debug:
-                print r
+                print(r)
         
         kicker = {}    
         counter = 0
@@ -420,14 +420,14 @@ class Poker:
         if(len(kicker) > 1):
             
             if self.debug: #Outputs the debug statements
-                print "---- Tie Braker ----"
-                print "---- Kicker ----"
+                print("---- Tie Braker ----")
+                print("---- Kicker ----")
                 for k, v in kicker.items():
-                    print str(k) + " : " + str(v)
+                    print(str(k) + " : " + str(v))
             
             #Iterate through all the kickers
             #It is important to the number of kickers differ based on the type of hand
-            number_of_kickers = len(kicker[kicker.keys().pop()])
+            number_of_kickers = len(kicker[list(kicker.keys()).pop()])
             for i in range (0, number_of_kickers):
                 high = 0
                 for k, v in kicker.items():
@@ -438,16 +438,16 @@ class Poker:
                 kicker = {k:v for k, v in kicker.items() if v[i] == high}
                 
                 if self.debug: #Outputs the debug statements of which
-                    print "---- " + "Round " + str(i) + " ----"
+                    print("---- " + "Round " + str(i) + " ----")
                     for k in kicker:
-                        print k
+                        print(k)
                         
                 #if only one the kickers of one player remains that they are the winner
                 if( len(kicker) <= 1):
-                    return kicker.keys().pop()
+                    return list(kicker.keys()).pop()
                 
         else:   # A clear winner was found
-            return kicker.keys().pop()
+            return list(kicker.keys()).pop()
         
         # A tie occurred, a list of the winners is returned
-        return kicker.keys()
+        return list(kicker.keys())
