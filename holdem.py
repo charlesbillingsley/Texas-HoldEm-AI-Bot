@@ -105,7 +105,7 @@ class Poker:
         prev = 0
         
         #Keeps track of all the pairs in a dictionary where the key is the pair's card value
-        #and the value is the number occurrences. Eg. If there are 3 Kings -> {"13":3} 
+        #and the value is the number occurrences. Eg. If there are 3 Kings -> {"13":3}
         for card in hand:
             if prev == card.value:
                 key = card.value
@@ -126,7 +126,7 @@ class Poker:
         
         #Here we determine the best possible combination the hand can be knowing if the
         #hand has a four of a kind, three of a kind, and multiple pairs.
-        
+
         if 4 in nop:        #Has 4 of a kind, assigns the score and the value of the 
             score = 7
             kicker = list(pairs.keys())
@@ -363,7 +363,7 @@ class Poker:
         
         for hand in players_hands:
             hand.extend(community_cards)
-            hand.sort()
+            hand.sort(key=lambda x: x.value)
     
         results = []
         if self.debug:      #Outputs the debug statements
