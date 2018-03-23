@@ -64,6 +64,24 @@ class Poker:
                     
         #Returns a lists of all the hands, which is a list of cards
         return inplay
+
+    def distribute_5(self):
+        number_of_cards = 5 #Each player gets 2 cards when playing by Texas Hold Em rules
+        if(number_of_cards*self.number_of_players > self.deck.cards_left() ):
+            return False
+        
+        inplay = []
+        for i in range(0, self.number_of_players):
+            inplay.append( [] )            
+        
+        #Deals each player one card at a time
+        #Has greater complexity, but simulates real life better
+        for i in range(0, number_of_cards):
+            for j in range(0, self.number_of_players):
+                inplay[j].append( self.deck.deal(1).pop() )
+                    
+        #Returns a lists of all the hands, which is a list of cards
+        return inplay
     
     #===============================================
     #------------------Name of Hand-----------------
@@ -91,6 +109,172 @@ class Poker:
             return "Royal Flush"
 
     #===============================================
+    #-----------------Type of Hand-----------------
+    #===============================================
+    def type_of_hand(self, name_of_hand):
+        if name_of_hand == "High Card":
+            return 0
+        elif name_of_hand == "Pair":
+            return 1
+        elif name_of_hand == "2 Pair":
+            return 2
+        elif name_of_hand == "3 of a Kind":
+            return 3
+        elif name_of_hand == "Straight":
+            return 4
+        elif name_of_hand == "Flush":
+            return 5
+        elif name_of_hand == "Full House":
+            return 6
+        elif name_of_hand == "Four of a Kind":
+            return 7
+        elif name_of_hand == "Straight Flush":
+            return 8
+        else:
+            return 9
+
+    def get_card_groups(self, hand):
+        # get a list of all pairs, triples, etc. in a hand
+        potential_groups = {}
+        for card in hand:
+            if card.value not in potential_groups.keys():
+                potential_groups[card.value] = [card]
+            else:
+                potential_groups[card.value].append(card)
+        groups = []
+        for key in potential_groups:
+            if len(potential_groups[key]) > 1:
+                groups.append(potential_groups[key])
+        return groups
+    
+    def get_straights(self, hand):
+        # sort the hand by card values
+        sorted_hand = sorted(hand, key = lambda x: x.value)
+        potential_straights = [] # a list of cards in a row; this gets trimmed at the end
+        straights_to_remove = [] # a list of straights that break the pattern. delete them AFTER the end of the loop
+        for card in sorted_hand:
+            #print("Card: " + str(card))
+            for straight in potential_straights:
+                # check if the current card follows the pattern of straight for each potential straight and if straight doesn't already have 5 cards in it
+                if card.value == straight[-1].value + 1:
+                    if len(straight) < 5:
+                        #print("Adding this to the straight starting with card " + str(straight[0]))
+                        straight.append(card)
+                elif potential_straights.index(straight) not in straights_to_remove: # the current card breaks the potential straight; add it to the removal list
+                    #print("This doesn't line up. Adding the straight starting with card " + str(straight[0]) + " to the removal list")
+                    straights_to_remove.append(potential_straights.index(straight))
+            #print("Adding a new straight starting with card " + str(card))
+            potential_straights.append([card]) # add a new potential straight containing the current card
+        # remove the straights that broke the pattern
+        for index in reversed(straights_to_remove):
+            #print("Removing the straight starting with card " + str(potential_straights[index][0]))
+            potential_straights.remove(potential_straights[index])
+        # remove any potential straights under 5 cards
+        straights_to_remove = []
+        for straight in potential_straights:
+            #print("The straight starting with card " + str(straight[0]))
+            if len(straight) < 5:
+                #print("Adding the straight starting with card " + str(straight[0]) + " to the removal list")
+                straights_to_remove.append(potential_straights.index(straight))
+        for index in reversed(straights_to_remove):
+            #print("Removing the straight starting with card " + str(potential_straights[index][0]))
+            potential_straights.remove(potential_straights[index])
+        return potential_straights
+    
+    def check_for_three_of_a_kind(self, hand, groups):
+        for group in groups:
+            if len(group) >= 3:
+                return True
+        return False
+
+    def check_for_flush(self, hand):
+        num_diamonds = 0
+        num_hearts = 0
+        num_spades = 0
+        num_clubs = 0
+        for card in hand:
+            if card.symbol == 0:
+                num_diamonds += 1
+            elif card.symbol == 1:
+                num_hearts += 1
+            elif card.symbol == 2:
+                num_spades += 1
+            else:
+                num_clubs += 1
+        return num_diamonds >= 5 or num_hearts >= 5 or num_spades >= 5 or num_clubs >= 5
+
+    def check_for_full_house(self, hand, groups):
+        have_pair = False
+        have_three_of_a_kind = False
+        for group in groups:
+            if len(group) >= 3:
+                have_three_of_a_kind = True
+            elif len(group) >= 2:
+                have_pair = True
+        return have_pair and have_three_of_a_kind
+
+    def check_for_four_of_a_kind(self, hand, groups):
+        for group in groups:
+            if len(group) == 4:
+                return True
+        return False
+
+    def check_for_straight_flush(self, hand, straights):
+        for straight in straights:
+            if self.check_for_flush(straight):
+                return True
+        return False
+
+    def check_for_royal_flush(self, hand):
+        tens = []
+        jacks = []
+        queens = []
+        kings = []
+        aces = []
+        for card in hand:
+            if card.value == 10:
+                tens.append(card)
+            elif card.value == 11:
+                jacks.append(card)
+            elif card.value == 12:
+                queens.append(card)
+            elif card.value == 13:
+                kings.append(card)
+            elif card.value == 14:
+                aces.append(card)
+        for ten in tens:
+            for jack in jacks:
+                for queen in queens:
+                    for king in kings:
+                        for ace in aces:
+                            if self.check_for_flush([ten, jack, queen, king, ace]):
+                                return True
+        return False
+
+    def get_hand_value(self, hand):
+        straights = self.get_straights(hand)
+        groups = self.get_card_groups(hand)
+        if self.check_for_royal_flush(hand):
+            return 9
+        elif self.check_for_straight_flush(hand, straights):
+            return 8
+        elif self.check_for_four_of_a_kind(hand, groups):
+            return 7
+        elif self.check_for_full_house(hand, groups):
+            return 6
+        elif self.check_for_flush(hand):
+            return 5
+        elif len(straights) > 0:
+            return 4
+        elif self.check_for_three_of_a_kind(hand, groups):
+            return 3
+        elif len(groups) > 1:
+            return 2
+        elif len(groups) > 0:
+            return 1
+        return 0
+
+    #===============================================
     #---------------------Score---------------------
     #===============================================
     def score(self, hand):
@@ -105,7 +289,7 @@ class Poker:
         prev = 0
         
         #Keeps track of all the pairs in a dictionary where the key is the pair's card value
-        #and the value is the number occurrences. Eg. If there are 3 Kings -> {"13":3}
+        #and the value is the number occurrences. Eg. If there are 3 Kings -> {"13":3} 
         for card in hand:
             if prev == card.value:
                 key = card.value
@@ -126,7 +310,7 @@ class Poker:
         
         #Here we determine the best possible combination the hand can be knowing if the
         #hand has a four of a kind, three of a kind, and multiple pairs.
-
+        
         if 4 in nop:        #Has 4 of a kind, assigns the score and the value of the 
             score = 7
             kicker = list(pairs.keys())
@@ -363,7 +547,7 @@ class Poker:
         
         for hand in players_hands:
             hand.extend(community_cards)
-            hand.sort(key=lambda x: x.value)
+            hand.sort()
     
         results = []
         if self.debug:      #Outputs the debug statements

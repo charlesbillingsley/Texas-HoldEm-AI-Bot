@@ -3,6 +3,7 @@ import sys, random
 
 debug = False  # Set to True to see the debug statements
 number_of_players = 2
+#data_file = open("Training Dataset.txt", 'w')
 
 poker = Poker(number_of_players, debug)
 if not poker:
@@ -28,6 +29,7 @@ for hand in players_hands:
     for card in hand:
         text += str(card) + "  "
     print(text)
+    print(poker.get_hand_value(hand))
 print("-----------------------")
 
 # Gets and prints the community cards
@@ -39,18 +41,24 @@ card = poker.getFlop()
 if not card:
     sys.exit("*** ERROR ***: Insufficient cards to distribute.")
 community_cards = card
+for hand in players_hands:
+    print(poker.get_hand_value(hand + community_cards))
 
 # Gets the Turn
 card = poker.getOne()
 if not card:
     sys.exit("*** ERROR ***: Insufficient cards to distribute.")
 community_cards.extend(card)
+for hand in players_hands:
+    print(poker.get_hand_value(hand + community_cards))
 
 # Gets the River
 card = poker.getOne()
 if not card:
     sys.exit("*** ERROR ***: Insufficient cards to distribute.")
 community_cards.extend(card)
+for hand in players_hands:
+    print(poker.get_hand_value(hand + community_cards))
 
 # Displays the Cards
 text = "Community Cards - "
@@ -106,3 +114,5 @@ else:
         text += " --- " + poker.name_of_hand(results[counter][0])
         counter += 1
         print(text)
+
+#data_file.close()
