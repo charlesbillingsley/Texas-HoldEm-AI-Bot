@@ -208,16 +208,21 @@ class Poker:
      
                 #Gets a list of all the cards remaining once pair are removed
                 temp = [card.value for card in hand if card.value != key]
-                #Gets the last 3 cards in the list which are the highest remaining cards
-                #which will be used in the event of a tie
-                card_value = temp.pop()
-                kicker.append(card_value)
-                
-                card_value = temp.pop()
-                kicker.append(card_value)
-                
-                card_value = temp.pop()
-                kicker.append(card_value)
+
+                try:
+                    if(len(temp) > 0):
+                        #Gets the last 3 cards in the list which are the highest remaining cards
+                        #which will be used in the event of a tie
+                        card_value = temp.pop()
+                        kicker.append(card_value)
+
+                        card_value = temp.pop()
+                        kicker.append(card_value)
+
+                        card_value = temp.pop()
+                        kicker.append(card_value)
+                except:
+                    print("ERROR: " + str(temp))
                 
         
         #------------------------------------------------
@@ -230,7 +235,7 @@ class Poker:
         
         #Checks to see if the hand contains an ace, and if so starts checking for the straight
         #using an ace low
-        if (hand[6].value == 14): 
+        if (hand[len(hand)-1].value == 14):
             prev = 1
         else: 
             prev = None
