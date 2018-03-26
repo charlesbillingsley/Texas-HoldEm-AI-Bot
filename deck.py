@@ -6,6 +6,13 @@ class Card:
         self.symbol = symbol
         self.value = value
     
+    def __lt__(self, other):
+        if self.value < other.value:
+            return -1
+        elif self.value == other.value:
+            return 0
+        return 1
+    
     def __str__(self):
         text = ""
         if self.value < 0:
