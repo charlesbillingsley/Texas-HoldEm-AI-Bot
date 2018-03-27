@@ -1,7 +1,23 @@
 from random import shuffle
 
+""" Card and Deck Classes.
+This module holds classes which represent both cards and decks. 
+
+Author:
+    Omar Shammas omar.shammas@gmail.com>
+
+Editors:
+    Charles Billingsley
+    Josh Getter
+    Adam Stewart
+    Josh Techentin
+"""
+
 
 class Card:
+    """
+    Class to hold specific card data
+    """
     def __init__(self, symbol, value):
         self.symbol = symbol
         self.value = value
@@ -34,8 +50,14 @@ class Card:
 
 
 class Deck:
-    # Initializes the deck, and adds jokers if specified
+    """
+    Class to hold specific deck data
+    """
     def __init__(self, add_jokers=False):
+        """
+        Initializes the deck, and adds jokers if specified.
+        :param add_jokers: whether or not to add jokers to the deck
+        """
         self.cards = []
         self.inplay = []
         self.addJokers = add_jokers
@@ -49,15 +71,20 @@ class Deck:
         else:
             self.total_cards = 52
 
-    # Shuffles the deck
     def shuffle(self):
+        """
+        Shuffles the deck
+        """
         self.cards.extend(self.inplay)
         self.inplay = []
         shuffle(self.cards)
 
-    # Cuts the deck by the amount specified
-    # Returns true if the deck was cut successfully and false otherwise
     def cut(self, amount):
+        """
+        Cuts the deck by the amount specified.
+        :param amount: the amount to cut the deck by
+        :return: true if the deck was cut successfully and false otherwise
+        """
         if not amount or amount < 0 or amount >= len(self.cards):
             return False  # returns false if cutting by a negative number or more cards than in the deck
 
@@ -67,8 +94,12 @@ class Deck:
         self.cards.extend(temp)
         return True
 
-    # Returns a data dictionary
     def deal(self, number_of_cards):
+        """
+        Deals a specified number of cards
+        :param number_of_cards: the number of cards to deal
+        :return: a data dictionary of the cards in play
+        """
 
         if number_of_cards > len(self.cards):
             return False  # Returns false if there are insufficient cards
@@ -81,4 +112,8 @@ class Deck:
         return inplay
 
     def cards_left(self):
+        """
+        Gets the number of cards left in a deck.
+        :return: the number of cards left in a deck
+        """
         return len(self.cards)
