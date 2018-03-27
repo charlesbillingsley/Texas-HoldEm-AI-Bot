@@ -1,18 +1,22 @@
+import random
+import sys
+
 from holdem import Poker
-import sys, random
 
 debug = False  # Set to True to see the debug statements
 number_of_players = 2
 
-f = open("records.txt","w+")  # Create file of history.
+f = open("records.txt", "w+")  # Create file of history.
 
-
-for round in range(0, 1000):
+for roundHand in range(0, 1000):
     hand_history = []  # Will keep track of the scores of a hand throughout a game.
 
     poker = Poker(number_of_players, debug)
     if not poker:
-        sys.exit("*** ERROR ***: Invalid number of players. It must be between 2 and 22.")
+        sys.exit(
+            "*** ERROR ***: "
+            "Invalid number of players. It must be between 2 and 22."
+        )
 
     print("1. Shuffling")
     poker.shuffle()
@@ -29,13 +33,14 @@ for round in range(0, 1000):
 
     print("4. Hands")
     print("-----------------------")
-    i=0
+    i = 0
     for hand in players_hands:
         text = "Player - "
         for card in hand:
             text += str(card) + "  "
         print(text)
-        hand_history.append(str(poker.score(hand)[0]) + ", ")  # Score of just hand.
+        hand_history.append(
+            str(poker.score(hand)[0]) + ", ")  # Score of just hand.
         i += 1
     print("-----------------------")
 
@@ -44,45 +49,49 @@ for round in range(0, 1000):
     print("-----------------------")
 
     # Gets the flop
-    card = poker.getFlop()
+    card = poker.get_flop()
     if not card:
         sys.exit("*** ERROR ***: Insufficient cards to distribute.")
     community_cards = card
-    i=0
+    i = 0
     for hand in players_hands:
         total = hand + community_cards
         total.sort(key=lambda x: x.value)
-        hand_history[i] += str(poker.score(total)[0]) + ", "  # Score of hand + 3 community cards.
+        hand_history[i] += str(
+            poker.score(total)[0]) + ", "  # Score of hand + 3 community cards.
         i += 1
 
     # Gets the Turn
-    card = poker.getOne()
+    card = poker.get_one()
     if not card:
         sys.exit("*** ERROR ***: Insufficient cards to distribute.")
     community_cards.extend(card)
-    i=0
+    i = 0
     for hand in players_hands:
         total = hand + community_cards
         total.sort(key=lambda x: x.value)
-        hand_history[i] += str(poker.score(total)[0]) + ", "  # Score of hand + 4 community cards.
+        hand_history[i] += str(
+            poker.score(total)[0]) + ", "  # Score of hand + 4 community cards.
         i += 1
 
     # Gets the River
-    card = poker.getOne()
+    card = poker.get_one()
     if not card:
         sys.exit("*** ERROR ***: Insufficient cards to distribute.")
     community_cards.extend(card)
-    i=0
+    i = 0
     for hand in players_hands:
         total = hand + community_cards
         total.sort(key=lambda x: x.value)
-        hand_history[i] += str(poker.score(total)[0]) + ", "  # Score of hand + 5 community cards.
-        hand_history[i] += str(poker.score(community_cards)[0])  # Score of all 5 community cards.
+        hand_history[i] += str(
+            poker.score(total)[0]) + ", "  # Score of hand + 5 community cards.
+        hand_history[i] += str(
+            poker.score(community_cards)[0])  # Score of all 5 community cards.
         i += 1
 
     f.write(hand_history[0] + "\n")
     f.write(hand_history[1] + "\n")
-    
+
     # Displays the Cards
     text = "Community Cards - "
     for card in community_cards:
