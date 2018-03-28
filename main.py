@@ -19,9 +19,9 @@ Authors:
 
 debug = False  # Set to True to see the debug statements
 number_of_players = 2
-f = open("records.txt", "w+")  # Create file of history.
+f = open("records.csv", "w+")  # Create file of history.
 
-for roundHand in range(0, 1000):
+for roundHand in range(0, 16000):
     hand_history = []  # Will keep track of the scores of a hand throughout a game.
 
     poker = Poker(number_of_players, debug)

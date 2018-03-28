@@ -191,11 +191,12 @@ class Poker:
                 temp = [card.value for card in hand if card.value != key]
                 # Get the 2 last cards in the list which are the 2 highest to be used in the
                 # event of a tie
-                card_value = temp.pop()
-                kicker.append(card_value)
+                if(len(temp) > 1):
+                    card_value = temp.pop()
+                    kicker.append(card_value)
 
-                card_value = temp.pop()
-                kicker.append(card_value)
+                    card_value = temp.pop()
+                    kicker.append(card_value)
 
         elif 2 in nop:  # Has at Least a Pair
             if nop[2] >= 2:  # Has at least 2  or 3 pairs
@@ -216,8 +217,9 @@ class Poker:
                         card.value != key1 and card.value != key2]
                 # Gets the last card in the list which is the highest remaining card to be used in
                 # the event of a tie
-                card_value = temp.pop()
-                kicker.append(card_value)
+                if(len(temp) > 0):
+                    card_value = temp.pop()
+                    kicker.append(card_value)
 
             else:  # Has only a pair
                 score = 1
@@ -228,20 +230,17 @@ class Poker:
                 # Gets a list of all the cards remaining once pair are removed
                 temp = [card.value for card in hand if card.value != key]
 
-                try:
-                    if len(temp) > 0:
-                        # Gets the last 3 cards in the list which are the highest remaining cards
-                        # which will be used in the event of a tie
-                        card_value = temp.pop()
-                        kicker.append(card_value)
+                if len(temp) > 2:
+                    # Gets the last 3 cards in the list which are the highest remaining cards
+                    # which will be used in the event of a tie
+                    card_value = temp.pop()
+                    kicker.append(card_value)
 
-                        card_value = temp.pop()
-                        kicker.append(card_value)
+                    card_value = temp.pop()
+                    kicker.append(card_value)
 
-                        card_value = temp.pop()
-                        kicker.append(card_value)
-                except:
-                    print("ERROR: " + str(temp))
+                    card_value = temp.pop()
+                    kicker.append(card_value)
 
         # ------------------------------------------------
         # ------------Checking for Straight---------------
