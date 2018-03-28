@@ -19,7 +19,6 @@ Authors:
 
 debug = False  # Set to True to see the debug statements
 number_of_players = 2
-
 f = open("records.txt", "w+")  # Create file of history.
 
 for roundHand in range(0, 1000):
@@ -103,8 +102,7 @@ for roundHand in range(0, 1000):
             poker.score(community_cards)[0])  # Score of all 5 community cards.
         i += 1
 
-    f.write(hand_history[0] + "\n")
-    f.write(hand_history[1] + "\n")
+
 
     # Displays the Cards
     text = "Community Cards - "
@@ -138,8 +136,10 @@ for roundHand in range(0, 1000):
         for hand in players_hands:
             if counter == winner:
                 text = "Winner ** "
+                hand_history[counter] += ", 1"  # Record win
             else:
                 text = "Loser  -- "
+                hand_history[counter] += ", 0"  # Record loss
             for c in hand:
                 text += str(c) + "  "
 
@@ -152,8 +152,10 @@ for roundHand in range(0, 1000):
         for hand in players_hands:
             if counter in winner:
                 text = "Winner ** "
+                hand_history[counter] += ", 1"  # Record win
             else:
                 text = "Loser  -- "
+                hand_history[counter] += ", 0"  # Record loss
             for c in hand:
                 text += str(c) + "  "
 
@@ -161,4 +163,6 @@ for roundHand in range(0, 1000):
             counter += 1
             print(text)
 
+    f.write(hand_history[0] + "\n")
+    f.write(hand_history[1] + "\n")
 f.close()
