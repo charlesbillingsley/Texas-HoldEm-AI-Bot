@@ -3,6 +3,20 @@ import sys
 
 from holdem import Poker
 
+# TODO fill in documentation
+""" Texas Hold Em AI Poker Bot.
+This module . 
+
+Example:
+    The program can be run by the following command::
+        $ python 
+Authors:
+    Charles Billingsley
+    Josh Getter
+    Adam Stewart
+    Josh Techentin
+"""
+
 debug = False  # Set to True to see the debug statements
 number_of_players = 2
 

@@ -1,6 +1,19 @@
 from deck import Deck
 import sys
 
+""" Texas Hold Em Poker Game.
+This module simulates a poker game. 
+
+Author:
+    Omar Shammas omar.shammas@gmail.com>
+
+Editors:
+    Charles Billingsley
+    Josh Getter
+    Adam Stewart
+    Josh Techentin
+"""
+
 
 class Poker:
     # ===============================================
