@@ -1,5 +1,6 @@
 from deck import Deck
 import sys
+from io import StringIO
 
 """ Texas Hold Em Poker Game.
 This module simulates a poker game. 
@@ -469,3 +470,39 @@ class Poker:
 
         # A tie occurred, a list of the winners is returned
         return list(kicker.keys())
+
+    def convert_knowledge_to_dict(self, knowledge):
+        dict = {}
+        s = StringIO(knowledge)
+        for line in s:
+            data = line.strip().split("|")
+            dict[data[0].strip()] = data[1]
+        return dict
+
+    def get_winning_odds(self, scores_to_compare, knowledge):
+        odds = 0
+        total = 0
+        scores = str(scores_to_compare).split(",")
+        for data, percentage in knowledge.items():
+            phases = data.split(",")  # Splits something like 0, 0, 1, 3, 0
+
+            # Check to see if our scores are equal to a line of data.  If it is, gather the odds of winning, from knowledge.
+            if self.compare_records(scores, phases):
+                odds += float(percentage)
+                total += 1
+        if total == 0:
+            print("I'm not sure how this happened!  New data point, possibly?")
+        else:
+            return odds/total  # This is an average, or the odds we have winning at this current phase of the game.
+
+    @staticmethod
+    def compare_records(record_one, record_two):
+        i = 0
+        while i < len(record_one) and i < len(record_two):
+            if int(record_one[i]) != int(record_two[i]):
+                break
+            i += 1
+        if i == len(record_one or i == len(record_two)):
+            return True
+        else:
+            return False
