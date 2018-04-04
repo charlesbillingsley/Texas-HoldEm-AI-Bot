@@ -506,3 +506,68 @@ class Poker:
             return True
         else:
             return False
+
+    @staticmethod
+    def check_action(action):
+        if action.strip().lower() == "hold" or action.strip().lower() == "fold" or action.strip().lower() == "call" or action.strip().lower() == "raise":
+            return True
+        else:
+            return False
+
+    def bidding(self, dealer, player_statuses, highest_bid):
+        i = dealer
+        turn_status = False  # Will keep track if all bids are in.
+        while True:
+            j = (i + 1) % len(player_statuses)
+            # If you're still playing this round..
+            if player_statuses.get(j)[1] != "fold":
+                print("PLAYER " + str(j) + "'s TURN")
+                if player_statuses.get(j)[0] < highest_bid:
+                    action = input(
+                        "Highest bid is currently " + str(highest_bid) + ".  Please type fold, call, raise.\n")
+                    if self.check_action(action):
+                        if action.strip().lower() == "raise":
+                            new_value = input("Please enter the numerical amount you'd like to raise by.\n")
+                            highest_bid += int(new_value)
+                            player_statuses.get(j)[0] = highest_bid
+                            player_statuses.get(j)[1] = "raise"
+                        elif action.strip().lower() == "fold":
+                            player_statuses.get(j)[1] = "fold"
+                        else:
+                            player_statuses.get(j)[0] = highest_bid
+                            player_statuses.get(j)[1] = "call"
+                    else:
+                        # They entered an invalid command.
+                        print(">")
+                else:
+                    action = input("You're currently matched with the highest bids (" + str(
+                        highest_bid) + ").  Would you like to fold, hold, or raise?\n")
+                    if self.check_action(action):
+                        if action.strip().lower() == "raise":
+                            new_value = input("Please enter the numerical amount you'd like to raise by.\n")
+                            highest_bid += int(new_value)
+                            player_statuses.get(j)[0] = highest_bid
+                            player_statuses.get(j)[1] = "raise"
+                        elif action.strip().lower() == "fold":
+                            player_statuses.get(j)[1] = "fold"
+                        else:
+                            player_statuses.get(j)[1] = "hold"
+                    else:
+                        # They entered an invalid command.
+                        print(">")
+
+            k = 0
+            for player in player_statuses:
+                if player_statuses[player][1] != "fold" and player_statuses[player][1] != "hold":
+                    turn_status = False
+                    break
+                k += 1
+            if k == len(player_statuses):
+                turn_status = True
+
+            # Check to see if everyone's gotten a chance, and bids are matched.
+            if j != dealer or not turn_status:
+                i = j
+            else:
+                break
+        return highest_bid
