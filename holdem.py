@@ -514,9 +514,21 @@ class Poker:
         else:
             return False
 
-    def bidding(self, dealer, player_statuses, highest_bid):
+    def bidding(self, dealer, player_statuses, highest_bid, ai_odds, phase_number):
+        # NOTE: Throughout this, Player 0 will be the AI.
         i = dealer
-        turn_status = False  # Will keep track if all bids are in.
+        all_turns = False  # Will keep track if everyone got at least one turn.
+        bid_status = False  # Will keep track if all bids are in.
+        # Ratio used to determine how valuable our ai_odds are.
+        if phase_number == 0:
+            ratio = 2/5
+        elif phase_number == 1:
+            ratio = 5/5
+        elif phase_number == 2:
+            ratio = 6/5
+        elif phase_number == 3:
+            ratio = 7/5
+
         while True:
             j = (i + 1) % len(player_statuses)
             # If you're still playing this round..
@@ -559,14 +571,16 @@ class Poker:
             k = 0
             for player in player_statuses:
                 if player_statuses[player][1] != "fold" and player_statuses[player][1] != "hold":
-                    turn_status = False
+                    bid_status = False
                     break
                 k += 1
             if k == len(player_statuses):
-                turn_status = True
+                bid_status = True
+            if not all_turns and j == dealer:
+                all_turns = True
 
             # Check to see if everyone's gotten a chance, and bids are matched.
-            if j != dealer or not turn_status:
+            if not all_turns or not bid_status:
                 i = j
             else:
                 break
