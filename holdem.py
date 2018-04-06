@@ -520,17 +520,27 @@ class Poker:
         all_turns = False  # Will keep track if everyone got at least one turn.
         bid_status = False  # Will keep track if all bids are in.
         prev_round_highest = highest_bid  # Will keep track of what the highest of the previous round was (for ref).
-        # Ratio used to determine how valuable our ai_odds are.
+
+        # Ratio used to determine how valuable our ai_odds are.  *TWEEK THESE FOR BETTER AI*
         if phase_number == 0:
             ratio = 2/5
         elif phase_number == 1:
-            ratio = 5/5
+            if ai_odds >= 80:
+                ratio = 5/5
+            else:
+                ratio = 3/5
         elif phase_number == 2:
-            ratio = 6/5
+            if ai_odds >= 80:
+                ratio = 6/5
+            else:
+                ratio = 2/5
         elif phase_number == 3:
-            ratio = 7/5
+            if ai_odds >= 85:
+                ratio = 7/5
+            else:
+                ratio = 1/5
 
-        upper_bound = int(ratio*ai_odds*100)
+        upper_bound = int(ratio*ai_odds)  # The upper-bound is the "limit" at which we begin to fold (if past phase 0).
         while True:
             j = (i + 1) % len(player_statuses)
             # If you're still playing this round..
@@ -618,21 +628,29 @@ class Poker:
     def decision_tree(highest_bid, prev_round_highest, my_highest_bid, upper_bound, phase_number):
         results = []
         if phase_number == 0:
-            if highest_bid < prev_round_highest + int(upper_bound/2) and my_highest_bid <= highest_bid:  # Don't fold on first round, too early to call.
+            # Don't fold on first round, too early to call.
+            # If the highest bid is less than the previous round highest plus half of my boundaries, and my highest bid is less than the pot highest, then RAISE!
+            if highest_bid < prev_round_highest + int(upper_bound/2) and my_highest_bid <= highest_bid:
                 results.append("raise")
                 results.append(prev_round_highest + int(upper_bound/2) - highest_bid)
+            # If the previous round highest plus half of my boundaries is less than or equal the highest bid and up caught up to date on the bidding, just HOLD!
             elif prev_round_highest + int(upper_bound/2) <= highest_bid and my_highest_bid == highest_bid:
                 results.append("hold")
+            # If the previous round highest plus half of my boundaries is less than or equal to the highest bid, but I'm not caught up, just CALL!
             elif prev_round_highest + int(upper_bound/2) <= highest_bid and my_highest_bid < highest_bid:
                 results.append("call")
         elif phase_number == 1 or phase_number == 2 or phase_number == 3:
+            # If the highest bid is less than the previous round highest plus a third of my boundaries and my highest bid is less than or equal to the highest bid, then RAISE!
             if highest_bid < prev_round_highest + int(upper_bound/3) and my_highest_bid <= highest_bid:
                 results.append("raise")
                 results.append(prev_round_highest + int(upper_bound/3) - highest_bid)
+            # If the previous round highest plus a third of my boundaries is less than or equal the highest bid, but also less than the previous round highest plus my upper bound, and my highest bid equal to the highest bid, then HOLD!
             elif prev_round_highest + int(upper_bound/3) <= highest_bid < prev_round_highest + int(upper_bound) and my_highest_bid == highest_bid:
                 results.append("hold")
+            # If the previous round highest plus a third of my boundaries is less than or equal the highest bid, but also less than the previous round highest plus my upper bound, and my highest bid isn't hte highest bid, then CALL!
             elif prev_round_highest + int(upper_bound/3) <= highest_bid < prev_round_highest + upper_bound and my_highest_bid < highest_bid:
                 results.append("call")
+            # Else... just FOLD!  Rip.
             else:
                 results.append("fold")
         else:

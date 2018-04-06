@@ -83,7 +83,7 @@ while True:
     print("PHASE ZERO ODDS: " + str(chances_of_winning))
 
     # Bidding
-    highest_bid = poker.bidding(dealer, player_statuses, highest_bid, chances_of_winning, 0)
+    highest_bid = poker.bidding(dealer, player_statuses, highest_bid, int(chances_of_winning*100), 0)
 
 
     print("-----------------------")
@@ -116,7 +116,7 @@ while True:
     print("PHASE ONE ODDS: " + str(chances_of_winning))
 
     # Bidding
-    highest_bid = poker.bidding(dealer, player_statuses, highest_bid, chances_of_winning, 1)
+    highest_bid = poker.bidding(dealer, player_statuses, highest_bid, int(chances_of_winning*100), 1)
 
     # Gets the Turn
     card = poker.get_one()
@@ -143,7 +143,7 @@ while True:
     print("PHASE TWO ODDS: " + str(chances_of_winning))
 
     # Bidding
-    highest_bid = poker.bidding(dealer, player_statuses, highest_bid, chances_of_winning, 2)
+    highest_bid = poker.bidding(dealer, player_statuses, highest_bid, int(chances_of_winning*100), 2)
 
     # Gets the River
     card = poker.get_one()
@@ -179,7 +179,7 @@ while True:
     print("PHASE FOUR ODDS: " + str(chances_of_winning))
 
     # Bidding
-    highest_bid = poker.bidding(dealer, player_statuses, highest_bid, chances_of_winning, 3)
+    highest_bid = poker.bidding(dealer, player_statuses, highest_bid, int(chances_of_winning*100), 3)
 
     print("-----------------------")
     print("6. Determining Score")
