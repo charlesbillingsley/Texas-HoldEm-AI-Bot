@@ -519,6 +519,7 @@ class Poker:
         i = dealer
         all_turns = False  # Will keep track if everyone got at least one turn.
         bid_status = False  # Will keep track if all bids are in.
+        prev_round_highest = highest_bid  # Will keep track of what the highest of the previous round was (for ref).
         # Ratio used to determine how valuable our ai_odds are.
         if phase_number == 0:
             ratio = 2/5
@@ -529,18 +530,32 @@ class Poker:
         elif phase_number == 3:
             ratio = 7/5
 
+        upper_bound = int(ratio*ai_odds*100)
         while True:
             j = (i + 1) % len(player_statuses)
             # If you're still playing this round..
             if player_statuses.get(j)[1] != "fold":
                 print("PLAYER " + str(j) + "'s TURN")
                 if player_statuses.get(j)[0] < highest_bid:
-                    action = input(
-                        "Highest bid is currently " + str(highest_bid) + ".  Please type fold, call, raise.\n")
+                    if j != 0:  # Make sure it isn't the AI (who is player 0).
+                        action = input(
+                            "Highest bid is currently " + str(highest_bid) + ".  Please type fold, call, raise.\n")
+                    else:
+                        action = \
+                            self.decision_tree(highest_bid, prev_round_highest, player_statuses.get(j)[0], upper_bound,
+                                               phase_number)[0]
+                        print("ACTION! " + action)
                     if self.check_action(action):
                         if action.strip().lower() == "raise":
-                            new_value = input("Please enter the numerical amount you'd like to raise by.\n")
-                            highest_bid += int(new_value)
+                            if j != 0:
+                                new_value = input("Please enter the numerical amount you'd like to raise by.\n")
+                                highest_bid += int(new_value)
+                            else:
+                                new_value = \
+                                self.decision_tree(highest_bid, prev_round_highest, player_statuses.get(j)[0],
+                                                   upper_bound, phase_number)[1]
+                                highest_bid += new_value
+                                print("By: " + str(new_value))
                             player_statuses.get(j)[0] = highest_bid
                             player_statuses.get(j)[1] = "raise"
                         elif action.strip().lower() == "fold":
@@ -549,15 +564,28 @@ class Poker:
                             player_statuses.get(j)[0] = highest_bid
                             player_statuses.get(j)[1] = "call"
                     else:
-                        # They entered an invalid command.
+                        # They entered an invalid command.  I'm not really error checking, cause' who's got time for that.
                         print(">")
                 else:
-                    action = input("You're currently matched with the highest bids (" + str(
-                        highest_bid) + ").  Would you like to fold, hold, or raise?\n")
+                    if j != 0:
+                        action = input("You're currently matched with the highest bids (" + str(
+                            highest_bid) + ").  Would you like to fold, hold, or raise?\n")
+                    else:
+                        action = \
+                            self.decision_tree(highest_bid, prev_round_highest, player_statuses.get(j)[0], upper_bound,
+                                               phase_number)[0]
+                        print("ACTION! " + action)
                     if self.check_action(action):
                         if action.strip().lower() == "raise":
-                            new_value = input("Please enter the numerical amount you'd like to raise by.\n")
-                            highest_bid += int(new_value)
+                            if j != 0:
+                                new_value = input("Please enter the numerical amount you'd like to raise by.\n")
+                                highest_bid += int(new_value)
+                            else:
+                                new_value = \
+                                self.decision_tree(highest_bid, prev_round_highest, player_statuses.get(j)[0],
+                                                   upper_bound, phase_number)[1]
+                                highest_bid += new_value
+                                print("By: " + str(new_value))
                             player_statuses.get(j)[0] = highest_bid
                             player_statuses.get(j)[1] = "raise"
                         elif action.strip().lower() == "fold":
@@ -585,3 +613,28 @@ class Poker:
             else:
                 break
         return highest_bid
+
+    @staticmethod
+    def decision_tree(highest_bid, prev_round_highest, my_highest_bid, upper_bound, phase_number):
+        results = []
+        if phase_number == 0:
+            if highest_bid < prev_round_highest + int(upper_bound/2) and my_highest_bid <= highest_bid:  # Don't fold on first round, too early to call.
+                results.append("raise")
+                results.append(prev_round_highest + int(upper_bound/2) - highest_bid)
+            elif prev_round_highest + int(upper_bound/2) <= highest_bid and my_highest_bid == highest_bid:
+                results.append("hold")
+            elif prev_round_highest + int(upper_bound/2) <= highest_bid and my_highest_bid < highest_bid:
+                results.append("call")
+        elif phase_number == 1 or phase_number == 2 or phase_number == 3:
+            if highest_bid < prev_round_highest + int(upper_bound/3) and my_highest_bid <= highest_bid:
+                results.append("raise")
+                results.append(prev_round_highest + int(upper_bound/3) - highest_bid)
+            elif prev_round_highest + int(upper_bound/3) <= highest_bid < prev_round_highest + int(upper_bound) and my_highest_bid == highest_bid:
+                results.append("hold")
+            elif prev_round_highest + int(upper_bound/3) <= highest_bid < prev_round_highest + upper_bound and my_highest_bid < highest_bid:
+                results.append("call")
+            else:
+                results.append("fold")
+        else:
+            results.append("n/a")  # Should be unreachable.
+        return results
