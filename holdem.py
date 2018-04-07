@@ -540,7 +540,8 @@ class Poker:
             else:
                 ratio = 1/5
 
-        upper_bound = int(ratio*ai_odds)  # The upper-bound is the "limit" at which we begin to fold (if past phase 0).
+        # The upper-bound is the "limit" at which we begin to fold (if past phase 0).
+        upper_bound = int(ratio*ai_odds)*2
         while True:
             j = (i + 1) % len(player_statuses)
             # If you're still playing this round..
