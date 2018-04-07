@@ -559,7 +559,11 @@ class Poker:
                         if action.strip().lower() == "raise":
                             if j != 0:
                                 new_value = input("Please enter the numerical amount you'd like to raise by.\n")
-                                highest_bid += int(new_value)
+                                try:
+                                    highest_bid += int(new_value)
+                                except ValueError:
+                                    print("Not a valid number.")
+                                    j -= 1
                             else:
                                 new_value = \
                                 self.decision_tree(highest_bid, prev_round_highest, player_statuses.get(j)[0],
@@ -575,7 +579,10 @@ class Poker:
                             player_statuses.get(j)[1] = "call"
                     else:
                         # They entered an invalid command.  I'm not really error checking, cause' who's got time for that.
-                        print(">")
+                        print("Invalid answer.")
+                        player_statuses.get(j)[1] = "error"
+                        j -= 1
+
                 else:
                     if j != 0:
                         action = input("You're currently matched with the highest bids (" + str(
@@ -589,7 +596,11 @@ class Poker:
                         if action.strip().lower() == "raise":
                             if j != 0:
                                 new_value = input("Please enter the numerical amount you'd like to raise by.\n")
-                                highest_bid += int(new_value)
+                                try:
+                                    highest_bid += int(new_value)
+                                except ValueError:
+                                    print("Not a valid number.")
+                                    j -= 1
                             else:
                                 new_value = \
                                 self.decision_tree(highest_bid, prev_round_highest, player_statuses.get(j)[0],
@@ -604,7 +615,9 @@ class Poker:
                             player_statuses.get(j)[1] = "hold"
                     else:
                         # They entered an invalid command.
-                        print(">")
+                        print("Invalid answer.")
+                        player_statuses.get(j)[1] = "error"
+                        j -= 1
 
             k = 0
             for player in player_statuses:
@@ -656,3 +669,13 @@ class Poker:
         else:
             results.append("n/a")  # Should be unreachable.
         return results
+
+    def print_all_hands(self, players_hands, editor_mode):
+        i = 0
+        for hand in players_hands:
+            text = "Player " + str(i) + " - "
+            for card in hand:
+                text += str(card) + "  "
+            if i != 0 or editor_mode:
+                print(text)
+            i += 1
