@@ -3,12 +3,10 @@ import sys
 
 from holdem import Poker
 
-# TODO fill in documentation
-""" Texas Hold Em AI Poker Bot.
-This module . 
-Example:
-    The program can be run by the following command::
-        $ python 
+""" Texas Hold Em AI Poker Bot Data Creator.
+
+This module plays games of Texas Hold Em to create data for AI training. 
+
 Authors:
     Charles Billingsley
     Josh Getter
@@ -21,7 +19,8 @@ number_of_players = 2
 f = open("records.csv", "w+")  # Create file of history.
 
 for roundHand in range(0, 32000):
-    hand_history = []  # Will keep track of the scores of a hand throughout a game.
+    # Will keep track of the scores of a hand throughout a game.
+    hand_history = []
 
     poker = Poker(number_of_players, debug)
     if not poker:
@@ -45,7 +44,6 @@ for roundHand in range(0, 32000):
 
     print("4. Hands")
     print("-----------------------")
-    i = 0
     for hand in players_hands:
         text = "Player - "
         for card in hand:
@@ -53,7 +51,6 @@ for roundHand in range(0, 32000):
         print(text)
         hand_history.append(
             str(poker.score(hand)[0]) + ", ")  # Score of just hand.
-        i += 1
     print("-----------------------")
 
     # Gets and prints the community cards
@@ -69,8 +66,8 @@ for roundHand in range(0, 32000):
     for hand in players_hands:
         total = hand + community_cards
         total.sort(key=lambda x: x.value)
-        hand_history[i] += str(
-            poker.score(total)[0]) + ", "  # Score of hand + 3 community cards.
+        # Score of hand + 3 community cards.
+        hand_history[i] += str(poker.score(total)[0]) + ", "
         i += 1
 
     # Gets the Turn
@@ -82,8 +79,8 @@ for roundHand in range(0, 32000):
     for hand in players_hands:
         total = hand + community_cards
         total.sort(key=lambda x: x.value)
-        hand_history[i] += str(
-            poker.score(total)[0]) + ", "  # Score of hand + 4 community cards.
+        # Score of hand + 4 community cards.
+        hand_history[i] += str(poker.score(total)[0]) + ", "
         i += 1
 
     # Gets the River
@@ -102,8 +99,6 @@ for roundHand in range(0, 32000):
         hand_history[i] += str(
             poker.score(temp)[0])  # Score of all 5 community cards.
         i += 1
-
-
 
     # Displays the Cards
     text = "Community Cards - "
@@ -124,7 +119,8 @@ for roundHand in range(0, 32000):
     except:
         sys.exit("*** ERROR ***: Problem determining the winner.")
 
-    # Checks to see if the hand has ended in tie and displays the appropriate message
+    # Checks to see if the hand has ended in tie and
+    # displays the appropriate message
     tie = True
     try:
         len(winner)

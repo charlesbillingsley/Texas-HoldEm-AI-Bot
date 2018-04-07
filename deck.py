@@ -19,10 +19,21 @@ class Card:
     Class to hold specific card data
     """
     def __init__(self, symbol, value):
+        """
+        The constructor for a card.
+
+        :param symbol: the pictorial symbol of the card
+        :param value: the numeric value of the card
+        """
         self.symbol = symbol
         self.value = value
 
     def __str__(self):
+        """
+        Gets the human readable symbol of the card.
+
+        :return: The human readable symbol of the card
+        """
         text = ""
         if self.value < 0:
             return "Joker"
@@ -53,9 +64,11 @@ class Deck:
     """
     Class to hold specific deck data
     """
+
     def __init__(self, add_jokers=False):
         """
         Initializes the deck, and adds jokers if specified.
+
         :param add_jokers: whether or not to add jokers to the deck
         """
         self.cards = []
@@ -75,6 +88,7 @@ class Deck:
         """
         Shuffles the deck
         """
+
         self.cards.extend(self.inplay)
         self.inplay = []
         shuffle(self.cards)
@@ -82,11 +96,15 @@ class Deck:
     def cut(self, amount):
         """
         Cuts the deck by the amount specified.
+
         :param amount: the amount to cut the deck by
         :return: true if the deck was cut successfully and false otherwise
         """
+
         if not amount or amount < 0 or amount >= len(self.cards):
-            return False  # returns false if cutting by a negative number or more cards than in the deck
+            # returns false if cutting by a negative
+            # number or more cards than in the deck
+            return False
 
         temp = []
         for i in range(0, amount):
@@ -96,7 +114,8 @@ class Deck:
 
     def deal(self, number_of_cards):
         """
-        Deals a specified number of cards
+        Deals a specified number of cards.
+
         :param number_of_cards: the number of cards to deal
         :return: a data dictionary of the cards in play
         """
@@ -114,6 +133,8 @@ class Deck:
     def cards_left(self):
         """
         Gets the number of cards left in a deck.
+
         :return: the number of cards left in a deck
         """
+
         return len(self.cards)

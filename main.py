@@ -3,13 +3,10 @@ import sys
 
 from holdem import Poker
 
-# TODO fill in documentation
 """ Texas Hold Em AI Poker Bot.
-This module . 
 
-Example:
-    The program can be run by the following command::
-        $ python 
+This module runs a game of Texas Hold Em using an AI bot against a human. 
+
 Authors:
     Charles Billingsley
     Josh Getter
@@ -18,7 +15,7 @@ Authors:
 """
 
 
-# NOTE: Our CPU will be player 0 throughout the entire program.
+# NOTE: Our AI Bot will be player 0 throughout the entire program.
 debug = False  # Set to True to see the debug statements
 editor_mode = False  # Set True to see loads of print statements.
 number_of_players = 2
@@ -28,8 +25,8 @@ player_winnings = []
 knowledge = {}
 ai_scores = ""
 
-i = 0
 for i in range(0, number_of_players):
+    # Set all players initial winnings to 0
     player_winnings.append(0)
 
 poker = Poker(number_of_players, debug)
@@ -47,25 +44,27 @@ if len(sys.argv) == 2:
         knowledge = poker.convert_knowledge_to_dict(file.read())
 elif len(sys.argv) < 2:
     print("Too few arguments provided")
-    print("On EOS Try: python3 main.py input.txt {targetLevel}")
     sys.exit(2)
 elif len(sys.argv) > 2:
     print("Too many arguments")
-    print("On EOS Try: python3 main.py input.txt {targetLevel}")
     sys.exit(2)
 
+# Check for editor mode
 action = input("Editor mode on? (y/n)\n")
 if action.strip().lower() == "y":
     print("Editor mode on.")
     editor_mode = True
 elif action.strip().lower() != "n":
-    print("I don't know what you typed, but it's off.")
+    print("Unknown response. Defaulting editor mode to off.")
 
 # Time to play the game!
 while True:
-    print("Starting game #" + str(game_num) + ".  Dealer is player " + str(dealer) + ".  Entry fee is $50 per player.")
+    print("Starting game #" + str(game_num)
+          + ".  Dealer is player " + str(dealer)
+          + ".  Entry fee is $50 per player.")
     player_statuses = {}
-    i = 0
+
+    # Set the initial statuses to hold with entry fee of $50
     for i in range(0, number_of_players):
         player_statuses[i] = [50, "hold"]
 
@@ -88,6 +87,7 @@ while True:
     print("-----------------------")
     poker.print_all_hands(players_hands, editor_mode)
 
+    # Calculate AI's odds based on its hand
     ai_scores = str(poker.score(players_hands[0])[0])
     chances_of_winning = poker.get_winning_odds(ai_scores, knowledge)
 
@@ -95,8 +95,8 @@ while True:
         print("PHASE ZERO ODDS: " + str(chances_of_winning))
 
     # Bidding
-    highest_bid = poker.bidding(dealer, player_statuses, highest_bid, int(chances_of_winning*100), 0)
-
+    highest_bid = poker.bidding(dealer, player_statuses, highest_bid,
+                                int(chances_of_winning*100), 0)
 
     print("-----------------------")
     # Gets and prints the community cards
@@ -118,15 +118,17 @@ while True:
         text += str(card) + "  "
     print(text)
 
+    # Sort and determine score of AI's hand and community cards
     total = players_hands[0] + community_cards
     total.sort(key=lambda x: x.value)
-    ai_scores = ai_scores +  "," + str(poker.score(total)[0])
+    ai_scores = ai_scores + "," + str(poker.score(total)[0])
     chances_of_winning = poker.get_winning_odds(ai_scores, knowledge)
     if editor_mode:
         print("PHASE ONE ODDS: " + str(chances_of_winning))
 
     # Bidding
-    highest_bid = poker.bidding(dealer, player_statuses, highest_bid, int(chances_of_winning*100), 1)
+    highest_bid = poker.bidding(dealer, player_statuses, highest_bid,
+                                int(chances_of_winning*100), 1)
 
     # Gets the Turn
     card = poker.get_one()
@@ -143,6 +145,7 @@ while True:
         text += str(card) + "  "
     print(text)
 
+    # Sort and determine score of AI's hand and community cards again
     total = players_hands[0] + community_cards
     total.sort(key=lambda x: x.value)
     ai_scores = ai_scores + "," + str(poker.score(total)[0])
@@ -151,7 +154,8 @@ while True:
         print("PHASE TWO ODDS: " + str(chances_of_winning))
 
     # Bidding
-    highest_bid = poker.bidding(dealer, player_statuses, highest_bid, int(chances_of_winning*100), 2)
+    highest_bid = poker.bidding(dealer, player_statuses, highest_bid,
+                                int(chances_of_winning*100), 2)
 
     # Gets the River
     card = poker.get_one()
@@ -168,25 +172,29 @@ while True:
         text += str(card) + "  "
     print(text)
 
+    # Sort and determine score of AI's hand and community cards again
     total = players_hands[0] + community_cards
     total.sort(key=lambda x: x.value)
     ai_scores = ai_scores + "," + str(poker.score(total)[0])
     chances_of_winning = poker.get_winning_odds(ai_scores, knowledge)
     if editor_mode:
         print("PHASE THREE ODDS: " + str(chances_of_winning))
+
+    # Make sure that the AI
+    # isn't counting on a win from solely to community cards
     temp = community_cards
     temp.sort(key=lambda x: x.value)
     if poker.score(total)[0] == poker.score(temp)[0]:
         ai_scores = ai_scores + "," + str(1)
     else:
         ai_scores = ai_scores + "," + str(0)
-
     chances_of_winning = poker.get_winning_odds(ai_scores, knowledge)
     if editor_mode:
         print("PHASE FOUR ODDS: " + str(chances_of_winning))
 
     # Bidding
-    highest_bid = poker.bidding(dealer, player_statuses, highest_bid, int(chances_of_winning*100), 3)
+    highest_bid = poker.bidding(dealer, player_statuses, highest_bid,
+                                int(chances_of_winning*100), 3)
 
     print("-----------------------")
     print("6. Determining Score")
@@ -201,7 +209,8 @@ while True:
     except:
         sys.exit("*** ERROR ***: Problem determining the winner.")
 
-    # Checks to see if the hand has ended in tie and displays the appropriate message
+    # Checks to see if the hand has ended in a tie and
+    # displays the appropriate message
     tie = True
     try:
         len(winner)
@@ -213,17 +222,20 @@ while True:
     p1 = player_statuses.get(1)[1]
 
     if p0 == "fold" and p1 == "fold":
-        print("There are no winners. (??)")
+        print("Both players folded. There are no winners. (??)")
     elif p0 == "fold" and p1 != "fold":
         i = 0
         print("-------- Winner has Been Determined By Fold --------")
         for hand in players_hands:
             if i != 0:
                 text = "Winner ** Player " + str(i) + " ** "
-                player_winnings[i] += player_statuses.get((i+1) % number_of_players)[0]  # Transfer winnings.
+                # Transfer winnings.
+                player_winnings[i] += \
+                    player_statuses.get((i+1) % number_of_players)[0]
             else:
                 text = "Loser  -- Player " + str(i) + " -- "
-                player_winnings[i] -= player_statuses.get(i)[0]  # Subtract losses.
+                # Subtract losses.
+                player_winnings[i] -= player_statuses.get(i)[0]
             for c in hand:
                 text += str(c) + "  "
 
@@ -236,10 +248,13 @@ while True:
         for hand in players_hands:
             if i != 1:
                 text = "Winner ** Player " + str(i) + " ** "
-                player_winnings[i] += player_statuses.get((i+1) % number_of_players)[0]  # Transfer winnings.
+                # Transfer winnings.
+                player_winnings[i] += \
+                    player_statuses.get((i+1) % number_of_players)[0]
             else:
                 text = "Loser  -- Player " + str(i) + " -- "
-                player_winnings[i] -= player_statuses.get(i)[0]  # Subtract losses.
+                # Subtract losses.
+                player_winnings[i] -= player_statuses.get(i)[0]
             for c in hand:
                 text += str(c) + "  "
 
@@ -252,10 +267,13 @@ while True:
         for hand in players_hands:
             if counter == winner:
                 text = "Winner ** Player " + str(counter) + " ** "
-                player_winnings[counter] += player_statuses.get((counter+1) % number_of_players)[0]  # Transfer winnings.
+                # Transfer winnings.
+                player_winnings[counter] \
+                    += player_statuses.get((counter+1) % number_of_players)[0]
             else:
                 text = "Loser  -- Player " + str(counter) + " -- "
-                player_winnings[counter] -= player_statuses.get(counter)[0]  # Subtract losses.
+                # Subtract losses.
+                player_winnings[counter] -= player_statuses.get(counter)[0]
             for c in hand:
                 text += str(c) + "  "
 
@@ -268,17 +286,20 @@ while True:
         for hand in players_hands:
             if counter in winner:
                 text = "Winner ** Player " + str(counter) + " ** "
-                player_winnings[counter] += player_statuses.get((counter+1) % number_of_players)[0]  # Transfer winnings.
+                # Transfer winnings.
+                player_winnings[counter] \
+                    += player_statuses.get((counter+1) % number_of_players)[0]
             else:
                 text = "Loser  -- Player " + str(counter) + " -- "
-                player_winnings[counter] -= player_statuses.get(counter)[0]  # Subtract losses.
+                # Subtract losses.
+                player_winnings[counter] -= player_statuses.get(counter)[0]
             for c in hand:
                 text += str(c) + "  "
 
             text += " --- " + poker.name_of_hand(results[counter][0])
             counter += 1
             print(text)
-            break;
+            break
 
     pot = 0
     for player in player_statuses:
@@ -294,7 +315,7 @@ while True:
             i += 1
         break
     elif action.strip().lower() != "y":
-        print("I don't know what you typed, but we're just going to play again.")
+        print("Invalid entry. Starting new game.")
 
     # Increment stuff.
     dealer = (dealer + 1) % number_of_players
