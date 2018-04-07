@@ -73,8 +73,8 @@ while True:
 
     print("4. Hands")
     print("-----------------------")
-    for hand in players_hands:
-        text = "Player - "
+    for index, hand in enumerate(players_hands):
+        text = "Player " + str(index) + " - "
         for card in hand:
             text += str(card) + "  "
         print(text)
@@ -98,8 +98,8 @@ while True:
     community_cards = card
 
     # Re-print hands.
-    for hand in players_hands:
-        text = "Player - "
+    for index, hand in enumerate(players_hands):
+        text = "Player " + str(index) + " - "
         for card in hand:
             text += str(card) + "  "
         print(text)
@@ -125,8 +125,8 @@ while True:
     community_cards.extend(card)
 
     # Re-print hands.
-    for hand in players_hands:
-        text = "Player - "
+    for index, hand in enumerate(players_hands):
+        text = "Player " + str(index) + " - "
         for card in hand:
             text += str(card) + "  "
         print(text)
@@ -152,8 +152,8 @@ while True:
     community_cards.extend(card)
 
     # Re-print hands.
-    for hand in players_hands:
-        text = "Player - "
+    for index, hand in enumerate(players_hands):
+        text = "Player " + str(index) + " - "
         for card in hand:
             text += str(card) + "  "
         print(text)
