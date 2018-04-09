@@ -636,7 +636,7 @@ class Poker:
         i = dealer
         all_turns = False  # Will keep track if everyone got at least one turn.
         bid_status = False  # Will keep track if all bids are in.
-        raise_called = False # Will keep track if the human calls the AIs raise
+        end_now = False # Will keep track if the human calls the AIs raise
 
         # Will keep track of what the highest of the
         # previous round was (for ref).
@@ -709,10 +709,11 @@ class Poker:
                             player_statuses.get(j)[1] = "raise"
                         elif action.strip().lower() == "fold":
                             player_statuses.get(j)[1] = "fold"
+                            end_now = True
                         else:
                             player_statuses.get(j)[0] = highest_bid
                             player_statuses.get(j)[1] = "call"
-                            raise_called = True
+                            end_now = True
                     else:
                         # They entered an invalid command.
                         # I'm not really error checking,
@@ -769,6 +770,8 @@ class Poker:
                         player_statuses.get(j)[1] = "error"
                         j -= 1
 
+            else:
+                end_now = True
             k = 0
             for player in player_statuses:
                 if player_statuses[player][1] != "fold" \
@@ -783,7 +786,7 @@ class Poker:
                 all_turns = True
 
             # Check to see if everyone's gotten a chance, and bids are matched.
-            if not all_turns or not raise_called:
+            if not all_turns or not end_now:
                 i = j
             else:
                 break
