@@ -636,6 +636,7 @@ class Poker:
         i = dealer
         all_turns = False  # Will keep track if everyone got at least one turn.
         bid_status = False  # Will keep track if all bids are in.
+        raise_called = False # Will keep track if the human calls the AIs raise
 
         # Will keep track of what the highest of the
         # previous round was (for ref).
@@ -711,6 +712,7 @@ class Poker:
                         else:
                             player_statuses.get(j)[0] = highest_bid
                             player_statuses.get(j)[1] = "call"
+                            raise_called = True
                     else:
                         # They entered an invalid command.
                         # I'm not really error checking,
@@ -781,7 +783,7 @@ class Poker:
                 all_turns = True
 
             # Check to see if everyone's gotten a chance, and bids are matched.
-            if not all_turns or not bid_status:
+            if not all_turns or not raise_called:
                 i = j
             else:
                 break
